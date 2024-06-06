@@ -93,6 +93,7 @@ with models.DAG(
         num_slices=nnodes,
         cluster_name=ClusterName.A3_CLUSTER.value,
         docker_image=DockerImage.MAXTEXT_GPU_JAX_PINNED.value,
+        base_output_directory="gs://runner-maxtext-logs",
         test_owner=test_owner.NINA_C,
     ).run()
     stable_gpu = gke_config.get_maxtext_end_to_end_gpu_gke_test_config(
