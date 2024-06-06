@@ -157,8 +157,10 @@ def get_maxtext_end_to_end_gpu_gke_test_config(
     cluster_name: str,
     test_owner: str,
     docker_image: str,
+    base_output_directory: str,
     num_slices: int = 1,
     project_name: str = Project.SUPERCOMPUTER_TESTING.value,
+    metric_aggregation_strategy: metric_config.AggregationStrategy = metric_config.AggregationStrategy.MEDIAN,
 ) -> task.GpuCreateResourceTask:
   job_gcp_config = gcp_config.GCPConfig(
       project_name=project_name,
@@ -184,9 +186,18 @@ def get_maxtext_end_to_end_gpu_gke_test_config(
       num_slices=num_slices,
   )
 
+  job_metric_config = metric_config.MetricConfig(
+        tensorboard_summary=metric_config.SummaryConfig(
+            file_location=base_output_directory,
+            aggregation_strategy=metric_aggregation_strategy,
+            use_regex_file_location=True,
+        ),
+  )
+
   return task.XpkTask(
       task_test_config=job_test_config,
       task_gcp_config=job_gcp_config,
+      task_metric_config=job_metric_config,
   )
 
 

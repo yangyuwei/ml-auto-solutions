@@ -76,7 +76,7 @@ def run_workload(
     )
     cmds = [
         "set -xue",
-        f"git clone https://github.com/google/xpk {tmpdir}/xpk",
+        f"git clone -b yangyuwei-xpk-a3plus https://github.com/google/xpk.git {tmpdir}/xpk",
     ]
     if use_vertex_tensorboard:
       workload_create_cmd += " --use-vertex-tensorboard"

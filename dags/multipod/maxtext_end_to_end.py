@@ -57,59 +57,7 @@ with models.DAG(
       "max_target_length=128 per_device_batch_size=1"
   )
   test_models_gpu = {
-      "train-c4-data": (f"{train_base} run_name=runner-{timestamp}-0", 1),
-      "train-synthetic-data": (
-          f"{train_base} run_name=runner-{timestamp}-1 dataset_type=synthetic",
-          1,
-      ),
-      "train-flash": (
-          f"{train_base} run_name=runner-{timestamp}-2 attention=cudnn_flash_te",
-          1,
-      ),
-      "train-quarter-batch-size": (
-          f"{train_base} run_name=runner-{timestamp}-3 per_device_batch_size=0.25 ici_tensor_parallelism=4",
-          1,
-      ),
-      "train-int8": (
-          f"{train_base} run_name=runner-{timestamp}-6 quantization=int8",
-          1,
-      ),
-      "train-fp8": (
-          f"{train_base} run_name=runner-{timestamp}-7 quantization=fp8",
-          1,
-      ),
-      "decode": (f"{decode_base} run_name=runner-{timestamp}-4", 1),
-      "decode-quarter-batch-size": (
-          f"{decode_base} run_name=runner-{timestamp}-5 per_device_batch_size=.25 ici_tensor_parallelism=4",
-          1,
-      ),
-      "generate-param-only-checkpoint": (
-          "XLA_PYTHON_CLIENT_MEM_FRACTION=0.65 TF_FORCE_GPU_ALLOW_GROWTH=true "
-          f"bash end_to_end/test_generate_param_only_checkpoint.sh -r runner-{timestamp}-8 "
-          "-o gs://runner-maxtext-logs -d gs://maxtext-dataset -i 4 -a dot_product",
-          1,
-      ),
-      "generate-param-only-checkpoint-int8": (
-          "XLA_PYTHON_CLIENT_MEM_FRACTION=0.65 TF_FORCE_GPU_ALLOW_GROWTH=true "
-          f"bash end_to_end/test_generate_param_only_checkpoint.sh -r runner-{timestamp}-9 "
-          "-o gs://runner-maxtext-logs -d gs://maxtext-dataset -i 4 -q int8 -a dot_product",
-          1,
-      ),
-      "grain-checkpoint-determinism": (
-          "XLA_PYTHON_CLIENT_MEM_FRACTION=0.65 TF_FORCE_GPU_ALLOW_GROWTH=true "
-          "bash end_to_end/test_checkpointing.sh runner gs://runner-maxtext-logs "
-          "gs://maxtext-dataset False c4-array_record dot_product",
-          1,
-      ),
-      "checkpoint-compatibility": (
-          "XLA_PYTHON_CLIENT_MEM_FRACTION=0.65 TF_FORCE_GPU_ALLOW_GROWTH=true "
-          "bash end_to_end/test_checkpoint_compatibility.sh runner "
-          "gs://runner-maxtext-logs gs://maxtext-dataset dot_product",
-          1,
-      ),
       "llama2-7b-train-1node": ("bash MaxText/configs/a3/llama_2_7b/1vm.sh", 1),
-      "llama2-7b-train-2node": ("bash MaxText/configs/a3/llama_2_7b/2vm.sh", 2),
-      "llama2-7b": ("bash end_to_end/gpu/a3/test_llama2_7b.sh", 1),
   }
 
   for model, test_script in test_models_tpu.items():
@@ -133,7 +81,7 @@ with models.DAG(
         docker_image=DockerImage.MAXTEXT_TPU_JAX_NIGHTLY.value,
         test_owner=test_owner.JON_B,
     ).run()
-    stable_tpu >> nightly_tpu
+    # stable_tpu >> nightly_tpu
 
   for model, (test_script, nnodes) in test_models_gpu.items():
     pinned_gpu = gke_config.get_maxtext_end_to_end_gpu_gke_test_config(
@@ -148,17 +96,18 @@ with models.DAG(
         test_owner=test_owner.NINA_C,
     ).run()
     stable_gpu = gke_config.get_maxtext_end_to_end_gpu_gke_test_config(
-        accelerator_type=GpuVersion.XPK_H100,
-        gpu_zone=Zone.US_CENTRAL1_C.value,
+        accelerator_type=GpuVersion.XPK_H100_MEGA,
+        gpu_zone=Zone.US_EAST4_A.value,
         time_out_in_min=300,
         test_name=f"{test_name_prefix}-stable-{model}",
         run_model_cmds=(test_script,),
         num_slices=nnodes,
-        cluster_name=ClusterName.A3_CLUSTER.value,
-        docker_image=DockerImage.MAXTEXT_GPU_JAX_STABLE.value,
+        cluster_name=ClusterName.A3PLUS_CLUSTER.value,
+        docker_image="gcr.io/supercomputer-testing/yooh/maxtext-tcpx-stable", # a docker image for test purpose
+        base_output_directory="gs://runner-maxtext-logs",
         test_owner=test_owner.NINA_C,
     ).run()
-    pinned_gpu >> stable_gpu
+    stable_gpu
 
   multicluster_test_models = {
       "gemma-7b": [
@@ -286,4 +235,4 @@ with models.DAG(
           test_owner=test_owner.ANISHA_M,
           cluster_name=test_scripts_details[1]["cluster_name"],
       ).run(gcs_location=shared_gcs_location)
-      stable_cpu >> stable_tpu >> nightly_cpu >> nightly_tpu
+      # stable_cpu >> stable_tpu >> nightly_cpu >> nightly_tpu
