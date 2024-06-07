@@ -57,14 +57,14 @@ with models.DAG(
       "max_target_length=128 per_device_batch_size=1"
   )
   test_models_gpu = {
-      "llama2-7b-train-1node": ("bash MaxText/configs/a3/llama_2_7b/1vm.sh", 1),
-      "llama2-7b-train-2node": ("bash MaxText/configs/a3/llama_2_7b/2vm.sh", 2),
-      "llama2-7b-train-4node": ("bash MaxText/configs/a3/llama_2_7b/4vm.sh", 4),
-      "llama2-7b-train-8node": ("bash MaxText/configs/a3/llama_2_7b/8vm.sh", 8),
-      "llama2-7b-train-16node": ("bash MaxText/configs/a3/llama_2_7b/16vm.sh", 16),
-      "llama2-7b-train-32node": ("bash MaxText/configs/a3/llama_2_7b/32vm.sh", 32),
-      "llama2-7b-train-64node": ("bash MaxText/configs/a3/llama_2_7b/64vm.sh", 64),
-      "llama2-7b-train-128node": ("bash MaxText/configs/a3/llama_2_7b/128vm.sh", 128),
+      "llama2-1node": ("bash MaxText/configs/a3/llama_2_7b/1vm.sh", 1),
+      "llama2-2node": ("bash MaxText/configs/a3/llama_2_7b/2vm.sh", 2),
+      "llama2-4node": ("bash MaxText/configs/a3/llama_2_7b/4vm.sh", 4),
+      "llama2-8node": ("bash MaxText/configs/a3/llama_2_7b/8vm.sh", 8),
+      "llama2-16node": ("bash MaxText/configs/a3/llama_2_7b/16vm.sh", 16),
+      "llama2-32node": ("bash MaxText/configs/a3/llama_2_7b/32vm.sh", 32),
+      "llama2-64node": ("bash MaxText/configs/a3/llama_2_7b/64vm.sh", 64),
+      "llama2-128node": ("bash MaxText/configs/a3/llama_2_7b/128vm.sh", 128),
   }
 
   for model, (test_script, nnodes) in test_models_gpu.items():
