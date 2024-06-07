@@ -84,18 +84,6 @@ with models.DAG(
     # stable_tpu >> nightly_tpu
 
   for model, (test_script, nnodes) in test_models_gpu.items():
-    pinned_gpu = gke_config.get_maxtext_end_to_end_gpu_gke_test_config(
-        accelerator_type=GpuVersion.XPK_H100,
-        gpu_zone=Zone.US_CENTRAL1_C.value,
-        time_out_in_min=300,
-        test_name=f"{test_name_prefix}-pinned-{model}",
-        run_model_cmds=(test_script,),
-        num_slices=nnodes,
-        cluster_name=ClusterName.A3_CLUSTER.value,
-        docker_image=DockerImage.MAXTEXT_GPU_JAX_PINNED.value,
-        base_output_directory="gs://runner-maxtext-logs",
-        test_owner=test_owner.NINA_C,
-    ).run()
     stable_gpu = gke_config.get_maxtext_end_to_end_gpu_gke_test_config(
         accelerator_type=GpuVersion.XPK_H100_MEGA,
         gpu_zone=Zone.US_EAST4_A.value,
@@ -105,7 +93,7 @@ with models.DAG(
         num_slices=nnodes,
         cluster_name=ClusterName.A3PLUS_CLUSTER.value,
         docker_image="gcr.io/supercomputer-testing/yooh/maxtext-tcpx-stable", # a docker image for test purpose
-        base_output_directory="gs://runner-maxtext-logs",
+        base_output_directory="gs://maxtext-experiments-multipod",
         test_owner=test_owner.NINA_C,
     ).run()
     stable_gpu
