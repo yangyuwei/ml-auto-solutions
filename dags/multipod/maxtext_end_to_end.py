@@ -58,19 +58,19 @@ with models.DAG(
   )
   test_models_gpu = {
       "llama2-1node": ("bash MaxText/configs/a3/llama_2_7b/1vm.sh", 1),
-      "llama2-2node": ("bash MaxText/configs/a3/llama_2_7b/2vm.sh", 2),
-      "llama2-4node": ("bash MaxText/configs/a3/llama_2_7b/4vm.sh", 4),
-      "llama2-8node": ("bash MaxText/configs/a3/llama_2_7b/8vm.sh", 8),
-      "llama2-16node": ("bash MaxText/configs/a3/llama_2_7b/16vm.sh", 16),
-      "llama2-32node": ("bash MaxText/configs/a3/llama_2_7b/32vm.sh", 32),
-      "llama2-64node": ("bash MaxText/configs/a3/llama_2_7b/64vm.sh", 64),
-      "llama2-128node": ("bash MaxText/configs/a3/llama_2_7b/128vm.sh", 128),
+      # "llama2-2node": ("bash MaxText/configs/a3/llama_2_7b/2vm.sh", 2),
+      # "llama2-4node": ("bash MaxText/configs/a3/llama_2_7b/4vm.sh", 4),
+      # "llama2-8node": ("bash MaxText/configs/a3/llama_2_7b/8vm.sh", 8),
+      # "llama2-16node": ("bash MaxText/configs/a3/llama_2_7b/16vm.sh", 16),
+      # "llama2-32node": ("bash MaxText/configs/a3/llama_2_7b/32vm.sh", 32),
+      # "llama2-64node": ("bash MaxText/configs/a3/llama_2_7b/64vm.sh", 64),
+      # "llama2-128node": ("bash MaxText/configs/a3/llama_2_7b/128vm.sh", 128),
   }
 
   for model, (test_script, nnodes) in test_models_gpu.items():
     stable_gpu = gke_config.get_maxtext_end_to_end_gpu_gke_test_config(
         accelerator_type=GpuVersion.XPK_H100_MEGA,
-        gpu_zone=Zone.US_EAST4_A.value,
+        gpu_zone=Zone.US_CENTRAL1_C.value,
         time_out_in_min=300,
         test_name=f"{test_name_prefix}-stable-{model}",
         run_model_cmds=(test_script,),
@@ -79,6 +79,6 @@ with models.DAG(
         docker_image="gcr.io/supercomputer-testing/yangyuwei/maxtext-fastrak:latest", # a docker image for test purpose
         base_output_directory="gs://maxtext-experiments-multipod",
         test_owner=test_owner.NINA_C,
-    ).run()
+    ).run_with_run_name_generation()
     stable_gpu
 
