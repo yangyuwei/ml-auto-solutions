@@ -280,7 +280,10 @@ def process_tensorboard_summary(
   )
   aggregated_metrics = {}
   for key, value in metrics.items():
-    aggregated_metrics[key] = aggregate_metrics(value, aggregation_strategy)
+    logging.info(f"TensorBoard before aggregated metrics key: {key}, value: {value}")
+    aggregated_value = aggregate_metrics(value, aggregation_strategy)
+    aggregated_metrics[key] = aggregated_value
+    logging.info(f"TensorBoard aggregated metrics key: {key}, value: {aggregated_value}")
   print("aggregated_metrics", aggregated_metrics)
 
   metric_history_rows = []
