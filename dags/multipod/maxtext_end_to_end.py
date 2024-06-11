@@ -70,7 +70,7 @@ with models.DAG(
   for model, (test_script, nnodes) in test_models_gpu.items():
     stable_gpu = gke_config.get_maxtext_end_to_end_gpu_gke_test_config(
         accelerator_type=GpuVersion.XPK_H100_MEGA,
-        gpu_zone=Zone.US_EAST4_A.value,
+        gpu_zone=Zone.US_CENTRAL1_C.value,
         time_out_in_min=300,
         test_name=f"{test_name_prefix}-stable-{model}",
         run_model_cmds=(test_script,),

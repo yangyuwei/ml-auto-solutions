@@ -108,18 +108,16 @@ def read_from_tb(
           value.tag, include_tag_patterns, exclude_tag_patterns
       ):
         continue
-      value_type = value.metadata.plugin_data.plugin_name
-      logging.info(
-        f"TensorBoard metrics value: {value}, value type: {value_type}."
-      )
 
-      if value_type == "scalars":
-        if value.tag not in metrics:
-          metrics[value.tag] = []
-        t = tf.make_ndarray(value.tensor)
-        metrics[value.tag].append(TensorBoardScalar(float(t), event.step))
-      elif value_type == "text":
-        metadata[value.tag] = bytes(value.tensor.string_val[0]).decode("utf-8")
+      if value.HasField("metadata"):
+        value_type = value.metadata.plugin_data.plugin_name
+        if value_type == "scalars":
+          if value.tag not in metrics:
+            metrics[value.tag] = []
+          t = tf.make_ndarray(value.tensor)
+          metrics[value.tag].append(TensorBoardScalar(float(t), event.step))
+        elif value_type == "text":
+          metadata[value.tag] = bytes(value.tensor.string_val[0]).decode("utf-8")
       elif value.HasField("simple_value"):
         # simple_value indicates the value is a float:
         # https://github.com/tensorflow/tensorflow/blob/4dacf3f/tensorflow/core/framework/summary.proto#L122
@@ -127,7 +125,7 @@ def read_from_tb(
         metrics.setdefault(value.tag, []).append(scalar)
       else:
         logging.info(
-            f"Discarding data point {value.tag} with type {value_type}."
+            f"Discarding data point {value.tag}."
         )
 
   return metrics, metadata
