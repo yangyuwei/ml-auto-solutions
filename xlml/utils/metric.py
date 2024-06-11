@@ -109,6 +109,10 @@ def read_from_tb(
       ):
         continue
       value_type = value.metadata.plugin_data.plugin_name
+      logging.info(
+        f"TensorBoard metrics value: {value}, value type: {value_type}."
+      )
+
       if value_type == "scalars":
         if value.tag not in metrics:
           metrics[value.tag] = []
