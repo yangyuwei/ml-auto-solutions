@@ -73,7 +73,7 @@ def run_workload(
         f" --project={cluster_project} --zone={zone}"
         f" --env {metric_config.SshEnvVars.GCS_OUTPUT.name}={gcs_path}"
         " --restart-on-user-code-failure --priority=high"
-        #" --scheduler=gke.io/topology-aware-auto"
+        " --scheduler=gke.io/topology-aware-auto"
     )
     cmds = [
         "set -xue",

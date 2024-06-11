@@ -160,7 +160,7 @@ def get_maxtext_end_to_end_gpu_gke_test_config(
     base_output_directory: str,
     num_slices: int = 1,
     project_name: str = Project.SUPERCOMPUTER_TESTING.value,
-    metric_aggregation_strategy: metric_config.AggregationStrategy = metric_config.AggregationStrategy.MEDIAN,
+    metric_aggregation_strategy: metric_config.AggregationStrategy = metric_config.AggregationStrategy.AVERAGE,
 ) -> task.GpuCreateResourceTask:
   job_gcp_config = gcp_config.GCPConfig(
       project_name=project_name,
