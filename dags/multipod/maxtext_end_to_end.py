@@ -57,8 +57,8 @@ with models.DAG(
       "max_target_length=128 per_device_batch_size=1"
   )
   test_models_gpu = {
-      # "llama2-1node": ("bash MaxText/configs/a3/llama_2_7b/1vm.sh", 1),
-      # "llama2-2node": ("bash MaxText/configs/a3/llama_2_7b/2vm.sh", 2),
+      "llama2-1node": ("bash MaxText/configs/a3/llama_2_7b/1vm.sh", 1),
+      "llama2-2node": ("bash MaxText/configs/a3/llama_2_7b/2vm.sh", 2),
       "llama2-4node": ("bash MaxText/configs/a3/llama_2_7b/4vm.sh", 4),
       "llama2-8node": ("bash MaxText/configs/a3/llama_2_7b/8vm.sh", 8),
       "llama2-16node": ("bash MaxText/configs/a3/llama_2_7b/16vm.sh", 16),
