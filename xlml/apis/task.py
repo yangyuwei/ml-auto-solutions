@@ -147,7 +147,7 @@ class XpkTask(BaseTask):
   task_gcp_config: gcp_config.GCPConfig
   task_metric_config: Optional[metric_config.MetricConfig] = None
   workload_provision_timeout: datetime.timedelta = datetime.timedelta(
-      minutes=300
+      minutes=720
   )
 
   def run(
@@ -283,6 +283,7 @@ class XpkTask(BaseTask):
     """
     with TaskGroup(group_id="post_process") as group:
       process_id = metric.generate_process_id.override(retries=0)()
+
       metric.process_metrics.override(retries=0)(
           process_id,
           self.task_test_config,
@@ -485,7 +486,7 @@ class GpuGkeTask(BaseTask):
   task_test_config: test_config.GpuGkeTest
   task_gcp_config: gcp_config.GCPConfig
   cluster_name: str
-  job_create_timeout: datetime.timedelta = datetime.timedelta(minutes=10)
+  job_create_timeout: datetime.timedelta = datetime.timedelta(minutes=720)
   task_metric_config: Optional[metric_config.MetricConfig] = None
 
   def run(self) -> DAGNode:
