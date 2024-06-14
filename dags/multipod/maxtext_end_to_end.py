@@ -76,7 +76,7 @@ with models.DAG(
         run_model_cmds=(test_script,),
         num_slices=nnodes,
         cluster_name=ClusterName.A3PLUS_CLUSTER.value,
-        docker_image="gcr.io/supercomputer-testing/yangyuwei/maxtext-fastrak:06-11-2024", # a docker image for test purpose
+        docker_image="gcr.io/supercomputer-testing/yangyuwei/maxtext-fastrak:v1.0.2", # a docker image for test purpose
         base_output_directory="gs://maxtext-experiments-multipod",
         test_owner=test_owner.NINA_C,
     ).run_with_run_name_generation()
