@@ -21,8 +21,7 @@ def get_authenticated_client(
 ) -> kubernetes.client.ApiClient:
   container_client = container_v1.ClusterManagerClient()
   cluster_path = (
-      # hard-code the location for now.
-      f'projects/{project_name}/locations/us-east4-a/clusters/{cluster_name}'
+      f'projects/{project_name}/locations/{region}/clusters/{cluster_name}'
   )
   response = container_client.get_cluster(name=cluster_path)
   creds, _ = google.auth.default()
